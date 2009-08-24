@@ -1,6 +1,5 @@
 package Net::Plurk::Message;
 use Moose;
-use DataTime;
 
 =head1 NAME
 
@@ -12,9 +11,10 @@ Plurk Message
 
 =cut
 
-has 'owner' => ( is => 'rw', isa => 'Str');
-has 'message' => ( is => 'rw', isa => 'Str');
-has 'timestamp' => (is => 'rw', isa => 'DateTime', default => sub {DateTime->now});
+has 'username' => ( is => 'ro', isa => 'Str');
+has 'nick' => ( is => 'ro', isa => 'Str');
+has 'message' => ( is => 'ro', isa => 'Str');
+has 'timestamp' => (is => 'ro', isa => 'Str');
 
 no Moose;
 __PACKAGE__->meta->make_immutable;

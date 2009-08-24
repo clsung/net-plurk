@@ -3,6 +3,7 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use HTML::TreeBuilder::XPath;
 use Net::Plurk::Page;
+use Net::Plurk::Message;
 use Net::Plurk::User;
 use JSON::Any;
 
@@ -24,7 +25,7 @@ has 'treeparser' => (
 
 has 'parsed' => ( is => 'rw', isa => 'Bool', default => 0 );
 has 'content' => ( is => 'rw', isa => 'Str' );
-enum 'PageType' => qw (user plurk main none);
+enum 'PageType' => qw (user message main none);
 has 'pagetype' => ( is => 'rw', isa => 'PageType', default => 'none' );
 
 =head2 BUILD
@@ -51,22 +52,39 @@ sub parse {
             url     => $self->get_static_page_url
         );
         $page->title( $self->get_title );
-        if ( $self->pagetype eq 'user' ) {
-            if ( my ($capture) = $self->content =~ m/^var GLOBAL = (.+)$/m ) {
-                my $j = JSON::Any->new;
-                $capture =~ s/new Date\(([^)]+)\)/$1/g;
-                my $json  = $j->decode($capture);
-                my $puser = $json->{page_user};
+        if ( my ($capture) = $self->content =~ m/^var GLOBAL = (.+)$/m ) {
+            my $j = JSON::Any->new;
+            $capture =~ s/new Date\(([^)]+)\)/$1/g;
+            my $json  = $j->decode($capture);
+            my $puser = $json->{page_user};
+            if ( $self->pagetype eq 'user' ) {
                 my $user =
                   Net::Plurk::User->new( username => $puser->{nick_name} );
                 $user->karma( $puser->{karma} );
                 $user->fans( $puser->{num_of_fans} );
                 $user->friends( $puser->{num_of_friends} );
                 $page->author($user);
+
+
+            }
+        }
+        if ( $self->pagetype eq 'message' ) {
+            my @nodes =
+                $self->treeparser->findnodes('//ul[@class="responses"]/*/div[@class="message "]');
+            $page->messages([]) if @nodes;
+            for my $node (@nodes) {
+                my ($uname, $nick, $message, $timestamp);
+                $uname = $node->findnodes('./a[@class="user"]')->[0]->attr('href');
+                $uname =~ s#.*/##;
+                $nick  = $node->findvalue('./a[@class="user"]');
+                $message = $node->findvalue('./span[@class="plurk_content"]');
+                $timestamp = $node->findvalue('./span[@class="time"]');
+                push @{$page->messages}, Net::Plurk::Message->new (
+                    username => $uname, nick => $nick, message => $message, 
+                    timestamp => $timestamp );
             }
         }
 
-        #        $page->build_messages($formatter->format($self->get_title));
         return $page;
     }
 }

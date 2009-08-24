@@ -106,6 +106,17 @@ sub get_title {
     return $self->pages->{$url}->title;
 }
 
+=head2 messages
+
+=cut
+
+sub messages {
+    my ($self, $url) = @_;
+    $url = $self->url unless $url;
+    $self->get() unless $self->pages->{$url};
+    return $self->pages->{$url}->messages;
+}
+
 =head2 get_karma
 
 =cut
