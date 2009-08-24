@@ -3,6 +3,13 @@ MANIFEST
 Makefile.PL
 README
 lib/Net/Plurk.pm
+lib/Net/Plurk/ME.pm
+lib/Net/Plurk/Message.pm
+lib/Net/Plurk/Page.pm
+lib/Net/Plurk/Parse.pm
+lib/Net/Plurk/User.pm
 t/00-load.t
+t/01-basic.t
+t/02-userpage.t
 t/pod-coverage.t
 t/pod.t
