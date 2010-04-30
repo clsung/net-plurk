@@ -1,7 +1,8 @@
 #!perl -T
 use utf8;
 
-use Test::More tests => 5;
+#use Test::More tests => 5;
+use Test::More skip_all => "Not yet";
 
 BEGIN {
 	use Net::Plurk;

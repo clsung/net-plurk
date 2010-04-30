@@ -1,5 +1,8 @@
 Revision history for Net-Plurk
 
+0.02    Fri Apr 30 12:17:18 CST 2010
+        use Official API => http://www.plurk.com/API
+
 0.01    Mon Aug 24 15:11:50 CST 2009
         First version, released on an unsuspecting world.
 

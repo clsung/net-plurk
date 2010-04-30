@@ -1,30 +1,36 @@
 package Net::Plurk;
+use feature ':5.10';
 use Moose;
-use WWW::Mechanize;
-use Net::Plurk::Parse;
-use Net::Plurk::Page;
+use URI;
+use JSON::Any;
+use AnyEvent::HTTP;
+#use Net::Plurk::User;
+use Net::Plurk::UserProfile;
+use Data::Dumper;
 
 use namespace::autoclean;
 
-has url => ( isa => 'Str', is => 'rw', default => 'http://plurk.com' );
-has baseurl => ( isa => 'Str', is => 'ro', default => 'http://plurk.com' );
-has mech => ( is => 'ro', default => sub {WWW::Mechanize->new} );
-has parser => ( isa => 'Net::Plurk::Parse', is => 'ro', lazy_build => 1);
-has pages => ( isa => 'HashRef[Str]', is => 'rw', default => sub { {} });
-has users => ( isa => 'HashRef[Str]', is => 'rw', default => sub { {} });
+has api_key => ( isa => 'Str', is => 'rw');
+has cookie => ( isa => 'HashRef', is => 'rw', default => sub{{}});
+has api_user => ( isa => 'Net::Plurk::UserProfile', is => 'rw');
+has unreadCount => ( isa => 'Int', is => 'ro' );
+has unreadAll => ( isa => 'Int', is => 'ro' );
+has unreadMy => ( isa => 'Int', is => 'ro' );
+has unreadPrivate => ( isa => 'Int', is => 'ro' );
+has unreadResponded => ( isa => 'Int', is => 'ro' );
+has json_parser => (isa => 'JSON::Any', is => 'ro', default => sub {JSON::Any->new()});
 
-our $user_pattern = 'plurk.com/user/';
 =head1 NAME
 
 Net::Plurk - The great new Net::Plurk!
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -44,34 +50,63 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =head1 FUNCTIONS
 
-=head2 set
+=head2 api
 
-Set the attributes
+Everything from here
 
 =cut
 
-sub set {
+sub api {
     my ($self, %args) = @_;
-    $self->url($args{url}) if $args{url};
+    my ($data, $header);
+    my $w = AE::cv;
+    my $u = URI->new("http://www.plurk.com/");
+    $u->path("/API".$args{path});
+    $u->scheme("https") if index($args{path}, "/Users") == 0;
+    delete $args{path};
+    $args{api_key} = $self->api_key unless $args{api_key};
+    $u->query_form(%args);
+    http_get ($u, 
+        cookie_jar => $self->cookie,
+        sub {
+            ($data, $header) = @_;
+            $data = $self->json_parser->from_json($data);
+            $w->send;
+        }
+    );
+    $w->recv;
+    return wantarray ? ($data, $header) : $data;
 }
 
-=head2 get
+=head2 is_logged_in
 
-Get the request url 
+Check if logged in
 
 =cut
 
-sub get {
-    my ($self, $url) = @_;
-    $url = $self->url unless $url;
-    $self->url($url) if ($url ne $self->url);
-    $self->mech->get($self->url);
-    return unless $self->mech->success;
-    $self->parser->content($self->mech->content);
-    my $page = $self->parser->parse();
-    $self->pages->{$self->url} = $page;
-    $self->users->{$page->author->username} = $page->author if $page->author;
-    return $self->pages->{$self->url}->title;
+sub is_logged_in {
+    my $self = shift;
+    return 1 if $self->cookie;
+    return 0;
+}
+
+=head2 login
+
+Get the request url and return Net::Plurk::User 
+
+=cut
+
+sub login {
+    my ($self, %args) = @_;
+    $args{no_data} //= 0;
+    my $json_data = $self->api(
+        path => '/Users/login',
+        username => $args{user},
+        password => $args{pass},
+#        no_data => $args{no_data} if $args{no_data},
+    );
+    $self->api_user(Net::Plurk::UserProfile->new($json_data));
+    return $self->api_user;
 }
 
 =head2 goto
@@ -117,23 +152,14 @@ sub messages {
     return $self->pages->{$url}->messages;
 }
 
-=head2 get_karma
+=head2 karma
 
 =cut
 
-sub get_karma {
-    my ($self, %args) = @_;
-    return 0 unless $args{user};
-    return $self->get_user($args{user},$args{renew})->karma;
-}
-
-=head2 _build_parser
-
-=cut
-
-sub _build_parser {
-    my $self = shift;
-    return Net::Plurk::Parse->new();
+sub karma {
+    my ($self);
+    return 0 unless $self->is_logged_in();
+    return 0;
 }
 
 =head1 AUTHOR
