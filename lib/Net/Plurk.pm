@@ -4,7 +4,6 @@ use Moose;
 use URI;
 use JSON::Any;
 use AnyEvent::HTTP;
-#use Net::Plurk::User;
 use Net::Plurk::UserProfile;
 use Data::Dumper;
 
@@ -13,6 +12,7 @@ use namespace::autoclean;
 has api_key => ( isa => 'Str', is => 'rw');
 has cookie => ( isa => 'HashRef', is => 'rw', default => sub{{}});
 has api_user => ( isa => 'Net::Plurk::UserProfile', is => 'rw');
+has publicProfiles => ( isa => 'HashRef', is => 'rw', default => sub {{}});
 has unreadCount => ( isa => 'Int', is => 'ro' );
 has unreadAll => ( isa => 'Int', is => 'ro' );
 has unreadMy => ( isa => 'Int', is => 'ro' );
@@ -26,11 +26,11 @@ Net::Plurk - The great new Net::Plurk!
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -109,47 +109,20 @@ sub login {
     return $self->api_user;
 }
 
-=head2 goto
+=head2 get_public_profile
+
+call /Profile/getPublicProfile
 
 =cut
 
-sub goto {
-    my ($self, %args) = @_;
-    $self->set(%args);
-    return $self->get();
-}
-
-=head2 get_user
-
-=cut
-
-sub get_user {
-    my ($self, $user, $renew) = @_;
-    return $self->users->{$user} unless ($renew or !($self->users->{$user}));
-    my $url = $self->baseurl."user/".$user;
-    $self->get($url);
-    return $self->users->{$user};
-}
-
-=head2 get_title
-
-=cut
-
-sub get_title {
-    my ($self, $url) = @_;
-    $url = $self->url unless $url;
-    return $self->pages->{$url}->title;
-}
-
-=head2 messages
-
-=cut
-
-sub messages {
-    my ($self, $url) = @_;
-    $url = $self->url unless $url;
-    $self->get() unless $self->pages->{$url};
-    return $self->pages->{$url}->messages;
+sub get_public_profile {
+    my ($self, $user) = @_;
+    my $json_data = $self->api(
+        path => '/Profile/getPublicProfile',
+        user_id => $user,
+    );
+    $self->publicProfiles->{ $user } = Net::Plurk::PublicUserProfile->new($json_data);
+    return $self->publicProfiles->{ $user };
 }
 
 =head2 karma
@@ -157,9 +130,10 @@ sub messages {
 =cut
 
 sub karma {
-    my ($self);
+    my ($self, %args) = @_;
+    return $self->get_public_profile($args{user})->user_info->karma if $args{user};
     return 0 unless $self->is_logged_in();
-    return 0;
+    return $self->api_user->user_info->karma;
 }
 
 =head1 AUTHOR

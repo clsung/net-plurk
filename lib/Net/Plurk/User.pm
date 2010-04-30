@@ -22,8 +22,8 @@ has 'nick_name' => (is => 'rw', isa => 'Str');
 has 'display_name' => (is => 'rw', isa => 'Str', lazy_build => 1);
 has 'location' => (is => 'rw', isa => 'Str');
 has 'timezone' => (is => 'rw', isa => 'Any');
-has 'date_of_birth' => (is => 'rw', isa => 'Str');
-has 'karma' => (is => 'rw', isa => 'Str', default => "0");
+has 'date_of_birth' => (is => 'rw', isa => 'Maybe[Str]');
+has 'karma' => (is => 'rw', isa => 'Num', default => 0);
 has 'gender' => (is => 'rw', isa => 'Int');
 has 'recruited' => (is => 'rw', isa => 'Int');
 

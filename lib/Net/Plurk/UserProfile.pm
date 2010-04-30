@@ -30,6 +30,15 @@ has 'privacy' => (is => 'ro', isa => enum([qw[ world only_friends only_me ]]));
 #has 'plurks' => (is => 'ro', isa => 'ArrayRef[Net::Plurk::PlurkContent]');
 has 'plurks' => (is => 'ro', isa => 'ArrayRef');
 
+package Net::Plurk::PublicUserProfile;
+use Moose;
+
+extends 'Net::Plurk::UserProfile';
+
+has 'are_friends' => (is => 'ro', isa => 'JSON::Boolean', default => 'JSON::false');
+has 'is_fan' => (is => 'ro', isa => 'JSON::Boolean', default => 'JSON::false');
+has 'is_following' => (is => 'ro', isa => 'JSON::Boolean', default => 'JSON::false');
+
 no Moose::Util::TypeConstraints;
 no Moose;
 __PACKAGE__->meta->make_immutable;
