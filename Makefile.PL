@@ -15,6 +15,7 @@ WriteMakefile(
         'Test::More' => 0,
         'AnyEvent::HTTP' => 0,
         'JSON::Any' => 0,
+        'Moose' => 0
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Net-Plurk-*' },
