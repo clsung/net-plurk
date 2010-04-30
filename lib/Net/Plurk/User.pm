@@ -11,15 +11,26 @@ Foobar
 
 =cut
 
-#subtype 'Karma' => as class_type ('Float');
+has 'id' => (is => 'rw', isa => 'Int');
+has 'uid' => (is => 'rw', isa => 'Int');
+has 'has_profile_image' => (is => 'rw', isa => 'Int');
+has 'avatar' => (is => 'rw', isa => 'Int');
+# not_saying, single, married, divorced, engaged, in_relationship, complicated, widowed, open_relationship
+has 'relationship' => (is => 'rw', isa => 'Str');
+has 'full_name' => (is => 'rw', isa => 'Str');
+has 'nick_name' => (is => 'rw', isa => 'Str');
+has 'display_name' => (is => 'rw', isa => 'Str', lazy_build => 1);
+has 'location' => (is => 'rw', isa => 'Str');
+has 'timezone' => (is => 'rw', isa => 'Any');
+has 'date_of_birth' => (is => 'rw', isa => 'Str');
+has 'karma' => (is => 'rw', isa => 'Str', default => "0");
+has 'gender' => (is => 'rw', isa => 'Int');
+has 'recruited' => (is => 'rw', isa => 'Int');
 
-#coerce 'Karma'
-#    => from 'Int'
-#        => via (
-has 'username' => (is => 'ro', isa => 'Str');
-has 'karma' => (is => 'rw', isa => 'Str', default => "-1");
-has 'fans' => (is => 'rw', isa => 'Int');
-has 'friends' => (is => 'rw', isa => 'Int');
+sub _build_display_name {
+    my $self = shift;
+    $self->display_name($self->nick_name) unless $self->display_name;
+}
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
