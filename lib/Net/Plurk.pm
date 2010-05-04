@@ -80,14 +80,19 @@ sub api {
 
 =head2 is_logged_in
 
-Check if logged in
+Check if logged in, we use /API/Blocks/get to check
+the return JSON contains 'error_text' => 'Requires login'
 
 =cut
 
 sub is_logged_in {
     my $self = shift;
-    return 1 if $self->cookie;
-    return 0;
+    return 0 unless $self->cookie;
+    my $json_data = $self->api(
+        path => '/Blocks/get',
+    );
+    return 0 if /error_text/ ~~ %{$json_data};
+    return 1;
 }
 
 =head2 login
@@ -107,6 +112,20 @@ sub login {
     );
     $self->api_user(Net::Plurk::UserProfile->new($json_data));
     return $self->api_user;
+}
+
+=head2 logout
+
+Just logout, should alway return 1
+
+=cut
+
+sub logout {
+    my ($self, %args) = @_;
+    my $json_data = $self->api(
+        path => '/Users/logout',
+    );
+    return $json_data->{'success_text'} eq 'ok'; 
 }
 
 =head2 get_public_profile

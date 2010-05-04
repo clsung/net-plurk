@@ -14,7 +14,7 @@ BEGIN {
         $p->login(user => $user, pass => $pass );
         is(1, $p->is_logged_in());
         cmp_ok ($p->karma(), '>', 0, 'Check self karma');
-        cmp_ok ($p->karma(user => 'plurkapi'), '>', 0, 'Check plurkapi karma');
+        cmp_ok ($p->karma(user => 'cwyuni'), '>', 80, 'Check cwyuni karma');
 }
 
 diag( "Testing Net::Plurk Check user karma" );

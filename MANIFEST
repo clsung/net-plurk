@@ -10,6 +10,7 @@ t/00-load.t
 t/01-basic.t
 t/02-userpage.t
 t/03-oneplurk.t
+t/04-publicprofile.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t
