@@ -12,6 +12,7 @@ t/02-userpage.t
 t/03-oneplurk.t
 t/04-publicprofile.t
 t/05-api_unreadcounts.t
+t/06-newplurks.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

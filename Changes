@@ -1,5 +1,10 @@
 Revision history for Net-Plurk
 
+0.04    Thu May  6 15:43:29 CST 2010
+        add get_new_plurks()
+        add t/06-newplurks.t
+        add lib/Net/Plurk/Plurk.pm
+
 0.03    Fri Apr 30 16:17:55 CST 2010
         add get_public_profile()
 

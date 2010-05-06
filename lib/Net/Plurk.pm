@@ -5,6 +5,7 @@ use URI;
 use JSON::Any;
 use AnyEvent::HTTP;
 use Net::Plurk::UserProfile;
+use DateTime;
 use Data::Dumper;
 
 use namespace::autoclean;
@@ -13,6 +14,15 @@ has api_key => ( isa => 'Str', is => 'rw');
 has cookie => ( isa => 'HashRef', is => 'rw', default => sub{{}});
 has api_user => ( isa => 'Net::Plurk::UserProfile', is => 'rw');
 has publicProfiles => ( isa => 'HashRef', is => 'rw', default => sub {{}});
+#has plurks => ( isa => 'ArrayRef[Net::Plurk::Plurk]', is => 'rw', default => sub {[]});
+#has plurk_users => ( isa => 'HashRef[Net::Plurk::User]', is => 'rw', default => sub {{}});
+has plurks => ( isa => 'ArrayRef', is => 'rw', default => sub {[]});
+has plurk_users => ( isa => 'HashRef', is => 'rw', default => sub {{}});
+has lastPollingTime => (isa => 'DateTime', is => 'rw',
+        # default is 5 mins ago
+        default => sub {DateTime->from_epoch( epoch => time() - 5 * 60 );}
+    );
+has events => ( isa => 'HashRef[CodeRef]', is => 'rw', default => sub {{}});
 has unreadCount => ( isa => 'Int', is => 'ro' );
 has unreadAll => ( isa => 'Int', is => 'ro' );
 has unreadMy => ( isa => 'Int', is => 'ro' );
@@ -26,11 +36,11 @@ Net::Plurk - The great new Net::Plurk!
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
@@ -39,8 +49,23 @@ Quick summary of what the module does.
 Perhaps a little code snippet.
 
     use Net::Plurk;
-
-    my $foo = Net::Plurk->new( username => 'foo', password => 'bar');
+    my $api_key = $PLURKAPIKEY // "dKkIdUCoHo7vUDPjd3zE0bRvdm5a9sQi";
+    my $user = $PLURKUSER // 'nobody';
+    my $pass = $PLURKPASS // 'nopass';
+    my $p = Net::Plurk->new(api_key => $api_key);
+    my $profile = $p->login(user => $user, pass => $pass );
+    $p->add_events(
+        on_new_plurk => sub {
+            my $plurk = shift;
+            use Data::Dumper; warn Dumper $plurk;
+        },
+        on_private_plurk => sub {
+            my $plurk = shift;
+            # blah
+        },
+        );
+    $p->listen;
+    my $json = $p->api( path => '/api');
     ...
 
 =head1 EXPORT
@@ -144,6 +169,29 @@ sub get_public_profile {
     return $self->publicProfiles->{ $user };
 }
 
+=head2 get_new_plurks
+
+call /Polling/getPlurks
+arguments =>
+    offset: Return plurks newer than offset, formatted as 2009-6-20T21:55:34. 
+
+=cut
+
+sub get_new_plurks {
+    my ($self, %args) = @_;
+    $args{offset} //= $self->lastPollingTime;
+    $args{limit} //= 50; # default is 50
+    $args{offset} = $args{offset}->strftime("%Y-%m-%dT%H:%M:%S");
+    my $json_data = $self->api(
+        path => '/Polling/getPlurks',
+        offset => $args{offset},
+        limit => $args{limit},
+    );
+    $self->plurk_users($json_data->{plurk_users});
+    $self->plurks($json_data->{plurks});
+    $self->lastPollingTime(DateTime->now);
+    return $self->plurks;
+}
 =head2 karma
 
 =cut
@@ -203,7 +251,7 @@ L<http://search.cpan.org/dist/Net-Plurk/>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009 Cheng-Lung Sung, all rights reserved.
+Copyright 2009~2010 Cheng-Lung Sung, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
