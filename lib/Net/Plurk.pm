@@ -13,6 +13,7 @@ use namespace::autoclean;
 has api_key => ( isa => 'Str', is => 'rw');
 has cookie => ( isa => 'HashRef', is => 'rw', default => sub{{}});
 has api_user => ( isa => 'Net::Plurk::UserProfile', is => 'rw');
+has api_errormsg => ( isa => 'Maybe[Str]', is => 'rw');
 has publicProfiles => ( isa => 'HashRef', is => 'rw', default => sub {{}});
 #has plurks => ( isa => 'ArrayRef[Net::Plurk::Plurk]', is => 'rw', default => sub {[]});
 #has plurk_users => ( isa => 'HashRef[Net::Plurk::User]', is => 'rw', default => sub {{}});
@@ -95,7 +96,9 @@ sub api {
         cookie_jar => $self->cookie,
         sub {
             ($data, $header) = @_;
+            $self->api_errormsg(undef); # clear errormsg
             $data = $self->json_parser->from_json($data);
+            $self->api_errormsg($data->{error_text}) if $header->{Status} eq '400';
             $w->send;
         }
     );
@@ -192,7 +195,10 @@ sub get_new_plurks {
     $self->lastPollingTime(DateTime->now);
     return $self->plurks;
 }
+
 =head2 karma
+
+    return logined user's karma, or specify user => 'who'
 
 =cut
 
@@ -201,6 +207,60 @@ sub karma {
     return $self->get_public_profile($args{user})->user_info->karma if $args{user};
     return 0 unless $self->is_logged_in();
     return $self->api_user->user_info->karma;
+}
+
+=head2 follow
+
+    return 1 if followed someone, 0 otherwise (see api_errormsg)
+
+=cut
+
+sub follow {
+    my ($self, $user) = @_;
+    my $json_data = $self->api(
+        path => '/FriendsFans/setFollowing',
+        user_id => $user,
+        follow => 'true',
+    );
+    return 0 if $self->api_errormsg;
+    return 1;
+}
+
+=head2 unfollow
+
+    return 1 if unfollowed someone, 0 otherwise (see api_errormsg)
+
+=cut
+
+sub unfollow {
+    my ($self, $user) = @_;
+    my $json_data = $self->api(
+        path => '/FriendsFans/setFollowing',
+        user_id => $user,
+        follow => 'false',
+    );
+    return 0 if $self->api_errormsg;
+    return 1;
+}
+
+=head2 add_plurk
+
+    add_plurk (qualifier, content, %opt)
+    %opt: limited_to, no_comment, lang
+
+=cut
+
+sub add_plurk {
+    my ($self, $content, $qualifier, %opt) = @_;
+    $qualifier //= 'says';
+    my $json_data = $self->api(
+        path => '/Timeline/plurkAdd',
+        qualifier => $qualifier,
+        content => $content,
+        %opt,
+    );
+    return Net::Plurk::Plurk->new($json_data) if !$self->api_errormsg;
+    return undef;
 }
 
 =head1 AUTHOR

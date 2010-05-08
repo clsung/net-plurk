@@ -14,7 +14,7 @@ Foobar
 has 'id' => (is => 'rw', isa => 'Int');
 has 'uid' => (is => 'rw', isa => 'Int');
 has 'has_profile_image' => (is => 'rw', isa => 'Int');
-has 'avatar' => (is => 'rw', isa => 'Int');
+has 'avatar' => (is => 'rw', isa => 'Maybe[Int]');
 # not_saying, single, married, divorced, engaged, in_relationship, complicated, widowed, open_relationship
 has 'relationship' => (is => 'rw', isa => 'Str');
 has 'full_name' => (is => 'rw', isa => 'Str');
