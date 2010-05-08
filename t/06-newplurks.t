@@ -12,8 +12,8 @@ BEGIN {
         my $p = Net::Plurk->new(api_key => $api_key);
         $p->login(user => $user, pass => $pass );
         is(1, $p->is_logged_in());
-        isa_ok ($p->get_new_plurks(limit => 1), ARRAY);
-        my $plurk = Net::Plurk::Plurk->new($p->plurks->[0]);
+        my @plurks = $p->get_new_plurks(limit => 1);
+        my $plurk = Net::Plurk::Plurk->new($plurks[0]);
         isa_ok ($plurk, Net::Plurk::Plurk);
 }
 

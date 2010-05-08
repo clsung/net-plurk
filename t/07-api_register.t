@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 use Env qw(PLURKAPIKEY);
 
 BEGIN {
@@ -13,6 +13,7 @@ BEGIN {
             date_of_birth => '2010-05-07');
         isa_ok ($json, HASH);
         is ($json->{error_text}, "User already found");
+        is ($p->api_errormsg, "User already found");
 }
 
 diag( "Testing Net::Plurk Register API" );
