@@ -22,14 +22,15 @@ BEGIN {
             $data = $http->body();
             my $j = JSON::Any->new();
             $json = $j->from_json( $data);
-            $plurk_msg = $json->{sentences};
-        }  || "Hello World!!!";
+            $json->{sentences}[0];
+        } || "Hello World!!!";
         my $plurk = $p->add_plurk($plurk_msg, "says", lang => $langs[0]);
         if (defined $plurk) {
             isa_ok ($plurk, Net::Plurk::Plurk);
             is($plurk->content, $plurk_msg);
         } else {
             is($p->api_errormsg, 'anti-flood-same-content');
+            diag("The same content flooding"); 
         }
         done_testing();
 }
