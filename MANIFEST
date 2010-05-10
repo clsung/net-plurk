@@ -12,6 +12,7 @@ t/02-userpage.t
 t/03-userkarma.t
 t/04-publicprofile.t
 t/05-api_unreadcounts.t
+t/06-addplurk.t
 t/06-newplurks.t
 t/07-api_register.t
 t/boilerplate.t
