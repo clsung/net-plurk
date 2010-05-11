@@ -18,10 +18,9 @@ BEGIN {
             use HTTP::Lite;
             use JSON::Any;
             $http = new HTTP::Lite;
-            $req = $http->request("http://more.handlino.com/sentences.json");
-            $data = $http->body();
+            $http->request("http://more.handlino.com/sentences.json");
             my $j = JSON::Any->new();
-            $json = $j->from_json( $data);
+            $json = $j->from_json( $http->body());
             $json->{sentences}[0];
         } || "Hello World!!!";
         my $plurk = $p->add_plurk($plurk_msg, "says", lang => $langs[0]);
