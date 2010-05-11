@@ -260,7 +260,7 @@ sub add_plurk {
         %opt,
     );
     return Net::Plurk::Plurk->new($json_data) if !$self->api_errormsg;
-    return undef;
+    return ;
 }
 
 =head1 AUTHOR
