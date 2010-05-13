@@ -16,4 +16,4 @@ BEGIN {
         is($p->follow('clsung'), 1);
 }
 
-diag( "Testing Net::Plurk Check user page" );
+diag( "Testing Be My fan ");

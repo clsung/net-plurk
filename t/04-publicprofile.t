@@ -16,4 +16,4 @@ BEGIN {
         isa_ok ($profile->user_info, Net::Plurk::User);
 }
 
-diag( "Testing Net::Plurk Check user page" );
+diag( "Testing Get Public User Profile" );

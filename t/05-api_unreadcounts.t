@@ -19,4 +19,4 @@ BEGIN {
         cmp_ok( $json->{responded}, '>=', 0);
 }
 
-diag( "Testing Net::Plurk Check user page" );
+diag( "Testing using API to retrieve unReadCount directly" );
