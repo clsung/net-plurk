@@ -1,5 +1,9 @@
 Revision history for Net-Plurk
 
+0.06    Thu May 13 09:52:41 CST 2010
+        add t/08-befan.pl
+        now follow() also takes nick_name 
+
 0.05    Tue May 11 14:51:29 CST 2010
         add t/06-addplurk.t
         add scirpts/folow.pl

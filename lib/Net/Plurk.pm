@@ -37,11 +37,11 @@ Net::Plurk - The great new Net::Plurk!
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =cut
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 =head1 SYNOPSIS
 
@@ -156,6 +156,19 @@ sub logout {
     return $json_data->{'success_text'} eq 'ok'; 
 }
 
+=head2 _get_unique_id
+
+given nick_name, return unique_id
+
+=cut 
+
+sub _get_unique_id {
+    my ($self, $nick_name) = @_;
+    # check if we have it in cache, since we only want to retreive unique id
+    $self->get_public_profile($nick_name) unless $self->publicProfiles->{ $nick_name };
+    return $self->publicProfiles->{$nick_name}->{user_info}->id;
+}
+
 =head2 get_public_profile
 
 call /Profile/getPublicProfile
@@ -216,10 +229,14 @@ sub karma {
 =cut
 
 sub follow {
-    my ($self, $user) = @_;
+    my ($self, $user_id) = @_;
+
+    # if input user nick_name instead of unique id
+    $user_id = $self->_get_unique_id($user_id) if $user_id !~ m/^\d+$/;
+
     my $json_data = $self->api(
         path => '/FriendsFans/setFollowing',
-        user_id => $user,
+        user_id => $user_id,
         follow => 'true',
     );
     return 0 if $self->api_errormsg;
@@ -233,10 +250,14 @@ sub follow {
 =cut
 
 sub unfollow {
-    my ($self, $user) = @_;
+    my ($self, $user_id) = @_;
+
+    # if input user nick_name instead of unique id
+    $user_id = $self->_get_unique_id($user_id) if $user_id !~ m/^\d+$/;
+
     my $json_data = $self->api(
         path => '/FriendsFans/setFollowing',
-        user_id => $user,
+        user_id => $user_id,
         follow => 'false',
     );
     return 0 if $self->api_errormsg;

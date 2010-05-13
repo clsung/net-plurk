@@ -16,6 +16,7 @@ t/05-api_unreadcounts.t
 t/06-addplurk.t
 t/06-newplurks.t
 t/07-api_register.t
+t/08-befan.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t
