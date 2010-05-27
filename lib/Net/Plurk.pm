@@ -33,15 +33,15 @@ has json_parser => (isa => 'JSON::Any', is => 'ro', default => sub {JSON::Any->n
 
 =head1 NAME
 
-Net::Plurk - The great new Net::Plurk!
+Net::Plurk - A perl interface to Plurk API
 
 =head1 VERSION
 
-Version 0.06
+Version 0.08
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.08';
 
 =head1 SYNOPSIS
 

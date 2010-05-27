@@ -1,5 +1,11 @@
 Revision history for Net-Plurk
 
+0.08    Thu May 27 16:07:35 CST 2010
+        update Makefile.PL
+
+0.07    Wed May 19 15:56:44 CST 2010
+        update Makefile.PL
+
 0.06    Thu May 13 09:52:41 CST 2010
         add t/08-befan.pl
         now follow() also takes nick_name 
