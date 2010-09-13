@@ -1,6 +1,8 @@
 Net-Plurk
 
-This module can be treat like a wrapper of http://www.plurk.com/API
+This module can be treat like a wrapper of Plurk (www.plurk.com) API.
+User who use Net-Plurk are required to apply their own api_key.
+See http://www.plurk.com/API for how to apply an API key.
 
 The simplest usage:
 
