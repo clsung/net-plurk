@@ -1,5 +1,9 @@
 Revision history for Net-Plurk
 
+0.09    Mon Sep 13 12:11:47 CST 2010
+        update Makefile.PL
+        bugfix
+
 0.08    Thu May 27 16:07:35 CST 2010
         update Makefile.PL
 
