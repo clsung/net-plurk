@@ -15,6 +15,8 @@ WriteMakefile(
     PREREQ_PM => {
         'Test::More' => 0,
         'AnyEvent::HTTP' => 0,
+        'Net::SSLeay' => 0,
+        'HTTP::Lite' => 0,
         'namespace::autoclean' => 0,
         'JSON::Any' => 0,
         'DateTime::Format::Strptime' => 0,
