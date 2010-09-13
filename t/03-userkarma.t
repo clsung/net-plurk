@@ -13,8 +13,8 @@ BEGIN {
         my $p = Net::Plurk->new(api_key => $api_key);
         $p->login(user => $user, pass => $pass );
         is(1, $p->is_logged_in());
-        cmp_ok ($p->karma(), '>', 0, 'Check self karma');
-        cmp_ok ($p->karma(user => 'cwyuni'), '>', 80, 'Check cwyuni karma');
+        cmp_ok ($p->karma(), '>=', 0, 'Check self karma');
+        cmp_ok ($p->karma(user => 'cwyuni'), '>', 80, 'Check the karma of famous cwyuni');
 }
 
 diag( "Testing Net::Plurk Check user karma" );
