@@ -192,7 +192,8 @@ sub get_public_profile {
         user_id => $user,
     );
     return $json_data if $self->raw_output;
-    return $json_data;
+    $self->publicProfiles->{ $user } = Net::Plurk::PublicUserProfile->new($json_data);
+    return $self->publicProfiles->{ $user };
 }
 
 =head2 get_own_profile
@@ -238,15 +239,16 @@ sub get_new_plurks {
 
 =head2 karma
 
-    return logined user's karma, or specify user => 'who'
+    return user's karma, or specify user => 'who'
 
 =cut
 
 sub karma {
     my ($self, %args) = @_;
     return $self->get_public_profile($args{user})->user_info->karma if $args{user};
-    return 0 unless $self->is_logged_in();
-    return $self->api_user->user_info->karma;
+    return 0;
+    # TODO: if authorized, return own karma, otherwise fail?
+    #return $self->own_profile->user_info->karma;
 }
 
 =head2 follow
