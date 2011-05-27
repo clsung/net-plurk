@@ -1,19 +1,21 @@
 #!perl -T
 
-use Test::More tests => 3;
-use Env qw(PLURKAPIKEY PLURKUSER PLURKPASS);
+use Env qw(CONSUMER_KEY CONSUMER_SECRET);
+use Test::More;
+if ($CONSUMER_KEY and $CONSUMER_SECRET) {
+    plan tests => 1;
+} else {
+    plan skip_all =>
+    'You must set environment variable: CONSUMER_KEY/CONSUMER_SECRET';
+}
 
 BEGIN {
 	use Net::Plurk;
 	use Net::Plurk::UserProfile;
 	use Net::Plurk::User;
-        my $api_key = $PLURKAPIKEY // "dKkIdUCoHo7vUDPjd3zE0bRvdm5a9sQi";
-        my $user = $PLURKUSER // 'nobody';
-        my $pass = $PLURKPASS // 'nopass';
-        my $p = Net::Plurk->new(api_key => $api_key);
-        $p->login(user => $user, pass => $pass );
-        is(1, $p->is_logged_in());
-        cmp_ok ($p->karma(), '>=', 0, 'Check self karma');
+	my $key = $CONSUMER_KEY;
+	my $secret = $CONSUMER_SECRET;
+	my $p = Net::Plurk->new(consumer_key => $key, consumer_secret => $secret);
         cmp_ok ($p->karma(user => 'cwyuni'), '>', 80, 'Check the karma of famous cwyuni');
 }
 
