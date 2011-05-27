@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 3;
+use Test::More skip_all => 'API 2 not support user register now';
 use Env qw(PLURKAPIKEY);
 
 BEGIN {
