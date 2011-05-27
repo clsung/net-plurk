@@ -3,9 +3,10 @@ MANIFEST
 Makefile.PL
 README
 lib/Net/Plurk.pm
-lib/Net/Plurk/UserProfile.pm
+lib/Net/Plurk/OAuth.pm
 lib/Net/Plurk/Plurk.pm
 lib/Net/Plurk/User.pm
+lib/Net/Plurk/UserProfile.pm
 scripts/follow.pl
 t/00-load.t
 t/01-basic.t
