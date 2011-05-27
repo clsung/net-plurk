@@ -1,15 +1,23 @@
 #!perl -T
 
-use Test::More tests => 2;
+use Env qw(CONSUMER_KEY CONSUMER_SECRET);
+use Test::More;
+if ($CONSUMER_KEY and $CONSUMER_SECRET) {
+    plan tests => 4;
+} else {
+    plan skip_all =>
+    'You must set environment variable: CONSUMER_KEY/CONSUMER_SECRET';
+}
 
 BEGIN {
 	use_ok( 'Net::Plurk' );
-        my $api_key = "dKkIdUCoHo7vUDPjd3zE0bRvdm5a9sQi";
-        my $p = Net::Plurk->new(api_key => $api_key);
-        my $r = $p->login(user => 'nobody', pass => 'nopass');
-        my %error = ('error_text' => 'Invalid API key');
-        eq_hash ($r, \%error);
-        is ($p->api_errormsg, 'Invalid API key');
+	my $key = $CONSUMER_KEY;
+	my $secret = $CONSUMER_SECRET;
+	my $p = Net::Plurk->new(consumer_key => $key, consumer_secret => $secret);
+	my $r = $p->get_public_profile('clsung');
+        is ($p->errormsg, undef);
+        is ($p->errorcode, 0);
+	is ($r->{user_info}->{full_name}, 'Cheng-Lung Sung'); # Author's Name :)
 }
 
 diag( "Testing Net::Plurk Basic Usage" );
