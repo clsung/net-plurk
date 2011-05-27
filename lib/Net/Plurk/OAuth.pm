@@ -51,7 +51,7 @@ sub _make_request {
 	signature_method => $self->signature_method,
 	timestamp => time,
 	nonce => md5_hex(time() * rand()),
-#	callback => (delete $args{callback}),
+	callback => (delete $args{callback}),
 	extra_params => { %args },
 	)
     );
@@ -74,26 +74,21 @@ sub authorize {
 
 sub request {
     my ($self, $path, %args) = @_;
-    my $header;
-    my $data = delete $args{content};
+    my ($header, $data);
     my $request_url = $self->base_url.$path;
     $self->_make_request($request_url, %args);
 
     my $w = AE::cv;
-#    my $u = URI->new("http://www.plurk.com/");
-#    $u->path("/APP".$args{path});
-#    delete $args{path};
-#    $u->query_form(%args);
     http_post ($self->_request->to_url,
         sub {
             ($data, $header) = @_;
             $self->_errormsg(undef); # clear errormsg
 	    $self->_errorcode(0); # clear errorcode
-            $data = $self->json_parser->from_json($data);
 	    if ($header->{Status} ne '200') {
 		$self->_errormsg($header->{Reason});
 		$self->_errorcode($header->{Status});
 	    }
+            $data = $self->json_parser->from_json($data);
             $w->send;
         }
     );
