@@ -35,6 +35,7 @@ has unreadAll => ( isa => 'Int', is => 'ro' );
 has unreadMy => ( isa => 'Int', is => 'ro' );
 has unreadPrivate => ( isa => 'Int', is => 'ro' );
 has unreadResponded => ( isa => 'Int', is => 'ro' );
+has raw_output => ( isa => 'Int', is => 'rw', default => 0);
 
 =head1 NAME
 
@@ -204,6 +205,7 @@ sub get_own_profile {
     my $json_data = $self->callAPI(
         '/Profile/getOwnProfile',
     );
+    return $json_data if $self->raw_output;
     $self->own_profile(Net::Plurk::UserProfile->new($json_data));
     return $self->own_profile;
 }
@@ -226,6 +228,7 @@ sub get_new_plurks {
         offset => $args{offset},
         limit => $args{limit},
     );
+    return $json_data if $self->raw_output;
     $self->plurk_users($json_data->{plurk_users});
     $self->plurks($json_data->{plurks});
     $self->lastPollingTime(DateTime->now);
@@ -303,6 +306,7 @@ sub add_plurk {
         content => $content,
         %opt,
     );
+    return $json_data if $self->raw_output;
     return Net::Plurk::Plurk->new($json_data) if !$self->errormsg;
     return ;
 }

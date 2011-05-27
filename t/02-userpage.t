@@ -3,7 +3,7 @@
 use Env qw(CONSUMER_KEY CONSUMER_SECRET ACCESS_TOKEN ACCESS_TOKEN_SECRET);
 use Test::More;
 if ($CONSUMER_KEY and $CONSUMER_SECRET) {
-    plan tests => 2;
+    plan tests => 3;
 } else {
     plan skip_all =>
     "You must set the following environment variables: \n".
@@ -24,6 +24,9 @@ BEGIN {
         my $profile = $p->get_own_profile();
         isa_ok ($profile, Net::Plurk::UserProfile);
         isa_ok ($profile->user_info, Net::Plurk::User);
+	$p->raw_output(1);
+        $profile = $p->get_own_profile();
+	isa_ok ($profile, 'HASH');
 }
 
 diag( "Testing Net::Plurk Check user page" );
