@@ -191,6 +191,7 @@ sub get_public_profile {
         '/Profile/getPublicProfile',
         user_id => $user,
     );
+    return $json_data if $self->raw_output;
     return $json_data;
 }
 

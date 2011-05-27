@@ -14,6 +14,7 @@ BEGIN {
 	my $key = $CONSUMER_KEY;
 	my $secret = $CONSUMER_SECRET;
 	my $p = Net::Plurk->new(consumer_key => $key, consumer_secret => $secret);
+	$p->raw_output(1);
 	my $r = $p->get_public_profile('clsung');
         is ($p->errormsg, undef);
         is ($p->errorcode, 0);
