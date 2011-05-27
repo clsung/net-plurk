@@ -1,19 +1,24 @@
 #!perl -T
 
-use Test::More tests => 2;
-use Env qw(PLURKAPIKEY PLURKUSER PLURKPASS);
+use Env qw(CONSUMER_KEY CONSUMER_SECRET ACCESS_TOKEN ACCESS_TOKEN_SECRET);
+use Test::More;
+if ($CONSUMER_KEY and $CONSUMER_SECRET 
+    and $ACCESS_TOKEN and $ACCESS_TOKEN_SECRET) {
+    plan tests => 3
+} else {
+    plan skip_all =>
+    "You must set the following environment variables: \n".
+    "CONSUMER_KEY/CONSUMER_SECRET\n".
+    "ACCESS_TOKEN/ACCESS_TOKEN_SECRET\n";
+}
 
 BEGIN {
 	use Net::Plurk;
-	use Net::Plurk::UserProfile;
-	use Net::Plurk::User;
-        my $api_key = $PLURKAPIKEY // "dKkIdUCoHo7vUDPjd3zE0bRvdm5a9sQi";
-        my $user = $PLURKUSER // 'nobody';
-        my $pass = $PLURKPASS // 'nopass';
-        my $p = Net::Plurk->new(api_key => $api_key);
-        $p->login(user => $user, pass => $pass );
-        is($p->is_logged_in(), 1);
-        is($p->follow('clsung'), 1);
+	my $p = Net::Plurk->new(consumer_key => $CONSUMER_KEY, consumer_secret => $CONSUMER_SECRET);
+	$p->authorize(token => $ACCESS_TOKEN, token_secret => $ACCESS_TOKEN_SECRET);
+        is($p->follow('plurkpl'), 1);
+	is($p->errorcode, 0);
+	is($p->errormsg, undef);
 }
 
 diag( "Testing Be My fan ");
