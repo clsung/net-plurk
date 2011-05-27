@@ -1,13 +1,10 @@
 #!perl
 use strict;
 use Net::Plurk;
-use Env;
-my $api_key = $PLURKAPIKEY // "dKkIdUCoHo7vUDPjd3zE0bRvdm5a9sQi";
-my $user = $PLURKUSER // 'nobody';
-my $pass = $PLURKPASS // 'nopass';
-my $p = Net::Plurk->new(api_key => $api_key);
-$p->login(user => $user, pass => $pass );
+use Env qw(CONSUMER_KEY CONSUMER_SECRET ACCESS_TOKEN ACCESS_TOKEN_SECRET);
+my $p = Net::Plurk->new(consumer_key => $CONSUMER_KEY, consumer_secret => $CONSUMER_SECRET);
+$p->authorize(token => $ACCESS_TOKEN, token_secret => $ACCESS_TOKEN_SECRET);
 my $profile = $p->get_public_profile ( 'clsung' );
 my $user_info = $profile->{user_info};
 warn $p->follow($user_info->id);
-warn $p->api_errormsg if $p->api_errormsg;
+warn $p->errormsg if $p->errormsg;
