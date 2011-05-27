@@ -75,7 +75,7 @@ Perhaps a little code snippet.
         },
         );
     $p->listen;
-    my $json = $p->callAPI( path => '/api');
+    my $json = $p->callAPI( '/api');
     ...
 
 =head1 EXPORT
@@ -149,23 +149,6 @@ sub callAPI {
     return $self->oauth->request($path, %args);
 }
 
-=head2 is_logged_in
-
-Check if logged in, we use /API/Blocks/get to check
-the return JSON contains 'error_text' => 'Requires login'
-
-=cut
-
-sub is_logged_in {
-    my $self = shift;
-    return 0 unless $self->cookie;
-    my $json_data = $self->callAPI(
-        path => '/Blocks/get',
-    );
-    return 0 if /error_text/ ~~ %{$json_data};
-    return 1;
-}
-
 =head2 _get_unique_id
 
 given nick_name, return unique_id
@@ -226,7 +209,7 @@ sub get_new_plurks {
     $args{limit} //= 50; # default is 50
     $args{offset} = $args{offset}->strftime("%Y-%m-%dT%H:%M:%S");
     my $json_data = $self->callAPI(
-        path => '/Polling/getPlurks',
+        '/Polling/getPlurks',
         offset => $args{offset},
         limit => $args{limit},
     );
@@ -264,10 +247,11 @@ sub follow {
     $user_id = $self->_get_unique_id($user_id) if $user_id !~ m/^\d+$/;
 
     my $json_data = $self->callAPI(
-        path => '/FriendsFans/setFollowing',
+        '/FriendsFans/setFollowing',
         user_id => $user_id,
         follow => 'true',
     );
+    return $json_data if $self->raw_output;
     return 0 if $self->errormsg;
     return 1;
 }
@@ -285,10 +269,11 @@ sub unfollow {
     $user_id = $self->_get_unique_id($user_id) if $user_id !~ m/^\d+$/;
 
     my $json_data = $self->callAPI(
-        path => '/FriendsFans/setFollowing',
+        '/FriendsFans/setFollowing',
         user_id => $user_id,
         follow => 'false',
     );
+    return $json_data if $self->raw_output;
     return 0 if $self->errormsg;
     return 1;
 }
@@ -304,7 +289,7 @@ sub add_plurk {
     my ($self, $content, $qualifier, %opt) = @_;
     $qualifier //= 'says';
     my $json_data = $self->callAPI(
-        path => '/Timeline/plurkAdd',
+        '/Timeline/plurkAdd',
         qualifier => $qualifier,
         content => $content,
         %opt,
