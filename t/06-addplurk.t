@@ -1,19 +1,23 @@
 #!perl -T
 use utf8;
+use Env qw(CONSUMER_KEY CONSUMER_SECRET ACCESS_TOKEN ACCESS_TOKEN_SECRET);
 use Test::More;
-use Env qw(PLURKAPIKEY PLURKUSER PLURKPASS);
+if ($CONSUMER_KEY and $CONSUMER_SECRET 
+    and $ACCESS_TOKEN and $ACCESS_TOKEN_SECRET) {
+} else {
+    plan skip_all =>
+    "You must set the following environment variables: \n".
+    "CONSUMER_KEY/CONSUMER_SECRET\n".
+    "ACCESS_TOKEN/ACCESS_TOKEN_SECRET\n";
+}
 
 BEGIN {
 	use Net::Plurk;
 	use Net::Plurk::Plurk;
         use List::Util 'shuffle';
-        my $api_key = $PLURKAPIKEY // "dKkIdUCoHo7vUDPjd3zE0bRvdm5a9sQi";
-        my $user = $PLURKUSER // 'nobody';
-        my $pass = $PLURKPASS // 'nopass';
+	my $p = Net::Plurk->new(consumer_key => $CONSUMER_KEY, consumer_secret => $CONSUMER_SECRET);
+	$p->authorize(token => $ACCESS_TOKEN, token_secret => $ACCESS_TOKEN_SECRET);
         my @langs = shuffle ('en','pt_BR','cn','ca','el','dk','de','es','sv','nb','hi','ro','hr','fr','ru','it','ja','he','hu','ne','th','ta_fp','in','pl','ar','fi','tr_ch','tr','ga','sk','uk','fa');
-        my $p = Net::Plurk->new(api_key => $api_key);
-        $p->login(user => $user, pass => $pass );
-        is(1, $p->is_logged_in());
         my $plurk_msg =  eval {
             use HTTP::Lite;
             use JSON::Any;
@@ -28,7 +32,7 @@ BEGIN {
             isa_ok ($plurk, Net::Plurk::Plurk);
             is($plurk->content, $plurk_msg);
         } else {
-            is($p->api_errormsg, 'anti-flood-same-content');
+            is($p->errormsg, 'anti-flood-same-content');
             diag("The same content flooding"); 
         }
         done_testing();
