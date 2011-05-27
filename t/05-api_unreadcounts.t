@@ -2,7 +2,8 @@
 
 use Env qw(CONSUMER_KEY CONSUMER_SECRET ACCESS_TOKEN ACCESS_TOKEN_SECRET);
 use Test::More;
-if ($CONSUMER_KEY and $CONSUMER_SECRET) {
+if ($CONSUMER_KEY and $CONSUMER_SECRET 
+    and $ACCESS_TOKEN and $ACCESS_TOKEN_SECRET) {
     plan tests => 5;
 } else {
     plan skip_all =>
