@@ -1,8 +1,8 @@
 Net-Plurk
 
-This module can be treat like a wrapper of Plurk (www.plurk.com) API.
-User who use Net-Plurk are required to apply their own api_key.
-See http://www.plurk.com/API for how to apply an API key.
+This module can be treat like a wrapper of Plurk (www.plurk.com) OAuth API.
+User who use Net-Plurk are required to apply their own tokens.
+See http://www.plurk.com/API/2 for detailed information.
 
 The simplest usage:
 
@@ -37,6 +37,9 @@ perldoc command.
     perldoc Net::Plurk
 
 You can also look for information at:
+
+    github issue tracker
+        http://github.com/clsung/net-plurk/issues
 
     RT, CPAN's request tracker
         http://rt.cpan.org/NoAuth/Bugs.html?Dist=Net-Plurk
