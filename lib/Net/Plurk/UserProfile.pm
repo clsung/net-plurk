@@ -29,6 +29,12 @@ has 'plurks_users' => (is => 'ro', isa => 'HashRef');
 has 'privacy' => (is => 'ro', isa => enum([qw[ world only_friends only_me ]]));
 #has 'plurks' => (is => 'ro', isa => 'ArrayRef[Net::Plurk::PlurkContent]');
 has 'plurks' => (is => 'ro', isa => 'ArrayRef');
+has 'nick_name' => (is => 'ro', isa => 'Str', lazy_build => 1);
+
+sub _build_nick_name {
+    my $self = shift;
+    return $self->user_info->nick_name;
+}
 
 no Moose::Util::TypeConstraints;
 package Net::Plurk::PublicUserProfile;
