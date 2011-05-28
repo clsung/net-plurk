@@ -7,12 +7,16 @@ See http://www.plurk.com/API for how to apply an API key.
 The simplest usage:
 
     use Net::Plurk;
-    my $api_key = $PLURKAPIKEY // "dKkIdUCoHo7vUDPjd3zE0bRvdm5a9sQi";
-    my $user = $PLURKUSER // 'nobody';
-    my $pass = $PLURKPASS // 'nopass';
-    my $p = Net::Plurk->new(api_key => $api_key);
-    my $profile = $p->login(user => $user, pass => $pass );
-    my $json = $p->api( path => '/Polling/getUnreadCount');
+    my $p = Net::Plurk->new(consumer_key => $CONSUMER_KEY, consumer_secret => $CONSUMER_SECRET);
+    $p->authorize(token => $ACCESS_TOKEN, token_secret => $ACCESS_TOKEN_SECRET);
+    my $profile = $p->get_own_profile();
+    ...
+    # return raw output (JSON)
+    $p->raw_output(1);
+    my $json = $p->get_own_profile();
+    ...
+    # or call API directly
+    my $json = $p->callAPI( '/Polling/getUnreadCount', %args);
     ...
 
 
@@ -49,7 +53,7 @@ You can also look for information at:
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2009~2010 Cheng-Lung Sung
+Copyright (C) 2009~2011 Cheng-Lung Sung
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
