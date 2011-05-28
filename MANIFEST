@@ -8,6 +8,7 @@ lib/Net/Plurk/Plurk.pm
 lib/Net/Plurk/User.pm
 lib/Net/Plurk/UserProfile.pm
 scripts/follow.pl
+scripts/replurk.pl
 t/00-load.t
 t/01-basic.t
 t/02-userpage.t
