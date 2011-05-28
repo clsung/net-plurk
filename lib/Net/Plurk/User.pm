@@ -18,13 +18,13 @@ has 'avatar' => (is => 'rw', isa => 'Maybe[Int]');
 has 'relationship' => (is => 'rw', isa => 'Str');
 has 'full_name' => (is => 'rw', isa => 'Str');
 has 'nick_name' => (is => 'rw', isa => 'Str');
-has 'display_name' => (is => 'rw', isa => 'Str', lazy_build => 1); # XXX
+has 'display_name' => (is => 'rw', isa => 'Str', lazy_build => 1);
 has 'location' => (is => 'rw', isa => 'Str');
 has 'timezone' => (is => 'rw', isa => 'Any');
 has 'date_of_birth' => (is => 'rw', isa => 'Maybe[Str]');
 has 'karma' => (is => 'rw', isa => 'Num', default => 0);
 has 'gender' => (is => 'rw', isa => 'Int');
-has 'recruited' => (is => 'rw', isa => 'Int'); # XXX
+has 'recruited' => (is => 'rw', isa => 'Int');
 has 'is_premium' => (is => 'ro', isa => 'Maybe[Object]', default => 'JSON::false');
 has 'email_confirmed' => (is => 'ro', isa => 'Maybe[Object]', default => 'JSON::false');
 
