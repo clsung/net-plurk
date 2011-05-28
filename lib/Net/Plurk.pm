@@ -299,6 +299,27 @@ sub add_plurk {
     return ;
 }
 
+=head2 get_plurk
+
+    get_plurk ($plurk_id)
+    $plurk_id can be base 36 encoded, or not
+
+=cut
+
+sub get_plurk {
+    my ($self, $plurk_id) = @_;
+    use Math::Base36 ':all';
+    $plurk_id = decode_base36($plurk_id) unless $plurk_id =~ m/^\d+$/m;
+    my $json_data = $self->callAPI(
+        '/Timeline/getPlurk',
+        plurk_id => $plurk_id,
+    );
+    return $json_data if $self->raw_output;
+    # XXX: didn't handle $json_data->{user}
+    return Net::Plurk::Plurk->new($json_data->{plurks}) if !$self->errormsg;
+    return ;
+}
+
 =head1 AUTHOR
 
 Cheng-Lung Sung, C<< <clsung at cpan.org> >>
