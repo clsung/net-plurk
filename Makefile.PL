@@ -17,6 +17,7 @@ WriteMakefile(
         'AnyEvent::HTTP' => 0,
         'Net::SSLeay' => 0,
         'Digest::HMAC_SHA1' => 0,
+        'Math::Base36' => 0,
         'HTTP::Lite' => 0,
         'Net::OAuth' => 0.27,
         'namespace::autoclean' => 0,
