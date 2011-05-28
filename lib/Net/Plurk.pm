@@ -59,7 +59,7 @@ Perhaps a little code snippet.
     my $key = $CONSUMER_KEY;
     my $secret = $CONSUMER_SECRET;
     my $access_token = $ACCESS_TOKEN
-    my $access_secret = $ACCESS_TOKEN_SECRET 
+    my $access_secret = $ACCESS_TOKEN_SECRET
     my $p = Net::Plurk->new(consumer_key => $key, consumer_secret => $secret);
     my $p->authorize(access_token => $access_token,
 	access_token_secret => $access_secret)
@@ -153,13 +153,30 @@ sub callAPI {
 
 given nick_name, return unique_id
 
-=cut 
+=cut
 
 sub _get_unique_id {
     my ($self, $nick_name) = @_;
     # check if we have it in cache, since we only want to retreive unique id
     $self->get_public_profile($nick_name) unless $self->publicProfiles->{ $nick_name };
     return $self->publicProfiles->{$nick_name}->{user_info}->id;
+}
+
+=head2 get_nick_name
+
+given unique_id, return nick_name
+
+=cut
+
+sub get_nick_name {
+    my ($self, $id) = @_;
+
+    $self->get_own_profile() unless $self->own_profile;
+    return $self->own_profile->nick_name
+	if $self->own_profile->{user_info}->{id} eq $id;
+
+    my $profile = $self->get_public_profile($id);
+    return $profile->nick_name;
 }
 
 =head2 get_public_profile
@@ -199,7 +216,7 @@ sub get_own_profile {
 
 call /Polling/getPlurks
 arguments =>
-    offset: Return plurks newer than offset, formatted as 2009-6-20T21:55:34. 
+    offset: Return plurks newer than offset, formatted as 2009-6-20T21:55:34.
 
 =cut
 
