@@ -316,7 +316,7 @@ sub get_plurk {
     );
     return $json_data if $self->raw_output;
     # XXX: didn't handle $json_data->{user}
-    return Net::Plurk::Plurk->new($json_data->{plurks}) if !$self->errormsg;
+    return Net::Plurk::Plurk->new($json_data->{plurk}) if !$self->errormsg;
     return ;
 }
 
